@@ -8,14 +8,4 @@ export default defineNuxtConfig({
 
   // Isto é para o modo de desenvolvimento, ajuda a recarregar mais rápido
   devtools: { enabled: true }
-
-  // --- ADICIONE ISTO ---
-  runtimeConfig: {
-    public: {
-      // Definimos o nome da nossa variável
-      apiBase: 'http://127.0.0.1:8000/api/v1' // Valor padrão (para local)
-    }
-  }
-  // --- FIM DA ADIÇÃO ---
-})
 })
