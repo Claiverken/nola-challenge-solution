@@ -218,7 +218,7 @@ const topCustomersLimit = ref(10) // Específico para Top Clientes
 const deliveryMinFilter = ref(1) // Específico para Piores Bairros
 
 // --- API Base URL ---
-const apiBaseUrl = 'http://127.0.0.1:8000/api/v1'
+const apiBaseUrl = process.env.NUXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1'
 
 // --- ESTADO (Loading & Dados) ---
 const kpiData = ref(null); const loadingKpis = ref(true);
