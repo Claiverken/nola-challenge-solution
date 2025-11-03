@@ -1,4 +1,4 @@
-# main.py (VERSÃO CORRIGIDA E COM FILTRO GLOBAL DE LOJA)
+# main.py
 from fastapi import FastAPI, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import text
@@ -6,16 +6,16 @@ from datetime import date
 from typing import Optional, List
 from fastapi.middleware.cors import CORSMiddleware
 
-# Importa as funções que acabámos de criar em database.py
+
 from database import get_db, test_connection
-# Importa TODOS os schemas
+
 from schemas import (
     KpiResponse, ProductSaleStat, TimeSeriesResponse,
     TimeSeriesDataPoint, ItemSaleStat, DeliveryPerformanceStat,
     CustomerSegmentStat, StoreSchema
 )
 
-# 1. Cria a instância da aplicação FastAPI
+# Cria a instância da aplicação FastAPI
 app = FastAPI(
     title="Nola BI API",
     description="API para servir dados de BI para o desafio God Level.",
@@ -33,14 +33,14 @@ app.add_middleware(
 )
 
 
-# --- Endpoints de Teste (Iguais) ---
+# --- Endpoints de Teste  ---
 @app.get("/")
 def read_root():
     return {"message": "Olá! Bem-vindo à API do Desafio Nola!"}
 
 
 @app.get("/api/v1/test-connection")
-def api_test_connection(db: Session = Depends(get_db)):  # Adicionado get_db
+def api_test_connection(db: Session = Depends(get_db)):
     if test_connection():
         return {"status": "sucesso", "message": "Conexão com a base de dados bem-sucedida!"}
     else:
@@ -57,12 +57,12 @@ def get_real_data(db: Session = Depends(get_db)):
         return {"error": str(e)}
 
 
-# 5. ATUALIZADO: Endpoint de KPIs (com store_id)
+# Endpoint de KPIs (com store_id)
 @app.get("/api/v1/kpis/main", response_model=KpiResponse)
 def get_main_kpis(
         start_date: Optional[date] = Query(None, description="Data de início (YYYY-MM-DD)"),
         end_date: Optional[date] = Query(None, description="Data de fim (YYYY-MM-DD)"),
-        store_id: Optional[int] = Query(None, description="Filtrar por um ID de loja específico"),  # <-- MUDANÇA
+        store_id: Optional[int] = Query(None, description="Filtrar por um ID de loja específico"),
         db: Session = Depends(get_db)
 ):
     base_query = """
@@ -79,7 +79,7 @@ def get_main_kpis(
     if end_date:
         base_query += " AND DATE(s.created_at) <= :end_date"
         params["end_date"] = end_date
-    if store_id:  # <-- MUDANÇA
+    if store_id:
         base_query += " AND s.store_id = :store_id"
         params["store_id"] = store_id
 
@@ -97,12 +97,12 @@ def get_main_kpis(
         return {"error": str(e)}
 
 
-# 6. ATUALIZADO: Endpoint Top Produtos (com store_id)
+# Endpoint Top Produtos (com store_id)
 @app.get("/api/v1/analytics/top-products", response_model=List[ProductSaleStat])
 def get_top_products(
         start_date: Optional[date] = Query(None, description="Data de início (YYYY-MM-DD)"),
         end_date: Optional[date] = Query(None, description="Data de fim (YYYY-MM-DD)"),
-        store_id: Optional[int] = Query(None, description="Filtrar por um ID de loja específico"),  # <-- MUDANÇA
+        store_id: Optional[int] = Query(None, description="Filtrar por um ID de loja específico"),
         channel_type: Optional[str] = Query(None, description="Tipo de Canal: 'D' (Delivery) ou 'P' (Presencial)"),
         limit: int = Query(10, description="Número de produtos a retornar (Top N)"),
         db: Session = Depends(get_db)
@@ -148,7 +148,7 @@ def get_top_products(
         return {"error": str(e)}
 
 
-# 7. MUDANÇA: Endpoint de Série Temporal (com datas opcionais e store_id)
+# Endpoint de Série Temporal (com datas opcionais e store_id)
 @app.get("/api/v1/analytics/time-series", response_model=TimeSeriesResponse)
 def get_time_series(
         start_date: Optional[date] = Query(None, description="Data de início (YYYY-MM-DD)"),
@@ -156,7 +156,7 @@ def get_time_series(
         metric: str = Query(..., description="Métrica: 'total_revenue', 'total_sales', ou 'average_ticket'"),
         time_unit: str = Query('day', description="Agrupar por: 'day', 'week', ou 'month'"),
         group_by: Optional[str] = Query(None, description="Agrupar por categoria: 'channel' ou 'store'"),
-        store_id: Optional[int] = Query(None, description="Filtrar por um ID de loja específico"),  # <-- MUDANÇA
+        store_id: Optional[int] = Query(None, description="Filtrar por um ID de loja específico"),
         channel_id: Optional[int] = Query(None, description="Filtrar por um ID de canal específico"),
         db: Session = Depends(get_db)
 ):
@@ -246,12 +246,12 @@ def get_time_series(
         raise HTTPException(status_code=500, detail=f"Erro ao processar a query: {e}")
 
 
-# 8. ATUALIZADO: Endpoint Top Itens (com store_id)
+# Endpoint Top Itens (com store_id)
 @app.get("/api/v1/analytics/top-items", response_model=List[ItemSaleStat])
 def get_top_items(
         start_date: Optional[date] = Query(None, description="Data de início (YYYY-MM-DD)"),
         end_date: Optional[date] = Query(None, description="Data de fim (YYYY-MM-DD)"),
-        store_id: Optional[int] = Query(None, description="Filtrar por um ID de loja específico"),  # <-- MUDANÇA
+        store_id: Optional[int] = Query(None, description="Filtrar por um ID de loja específico"),
         limit: int = Query(10, description="Número de itens a retornar (Top N)"),
         db: Session = Depends(get_db)
 ):
@@ -272,7 +272,7 @@ def get_top_items(
     if end_date:
         base_query += " AND DATE(s.created_at) <= :end_date"
         params["end_date"] = end_date
-    if store_id:  # <-- MUDANÇA
+    if store_id:
         base_query += " AND s.store_id = :store_id"
         params["store_id"] = store_id
 
@@ -293,14 +293,14 @@ def get_top_items(
         raise HTTPException(status_code=500, detail=f"Erro ao processar a query: {e}")
 
 
-# 9. ATUALIZADO: Endpoint Performance de Entrega (com store_id)
+# Endpoint Performance de Entrega (com store_id)
 @app.get("/api/v1/analytics/delivery-performance", response_model=List[DeliveryPerformanceStat])
 def get_delivery_performance(
         start_date: Optional[date] = Query(None, description="Data de início (YYYY-MM-DD)"),
         end_date: Optional[date] = Query(None, description="Data de fim (YYYY-MM-DD)"),
-        store_id: Optional[int] = Query(None, description="Filtrar por um ID de loja específico"),  # <-- MUDANÇA
+        store_id: Optional[int] = Query(None, description="Filtrar por um ID de loja específico"),
         limit: int = Query(10, description="Número de bairros a retornar (Top N)"),
-        min_deliveries: int = Query(1, description="Mínimo de entregas para o bairro aparecer"),  # Padrão 1
+        min_deliveries: int = Query(1, description="Mínimo de entregas para o bairro aparecer"),
         db: Session = Depends(get_db)
 ):
     base_query = """
@@ -340,7 +340,7 @@ def get_delivery_performance(
         raise HTTPException(status_code=500, detail=f"Erro ao processar a query: {e}")
 
 
-# 10. Endpoint Clientes em Risco (Simplificado - usa sempre HOJE)
+# Endpoint Clientes em Risco (Simplificado - usa sempre HOJE)
 @app.get("/api/v1/analytics/customer-segments", response_model=List[CustomerSegmentStat])
 def get_customer_segments(
         min_recency_days: int = Query(30, description="Nº mínimo de dias desde a última compra"),
@@ -403,7 +403,7 @@ def get_customer_segments(
         raise HTTPException(status_code=500, detail=f"Erro ao processar a query: {e}")
 
 
-# 11. Endpoint Top Clientes (AGORA GLOBAL, com store_id)
+# Endpoint Top Clientes (AGORA GLOBAL, com store_id)
 @app.get("/api/v1/analytics/top-customers", response_model=List[CustomerSegmentStat])
 def get_top_customers(
         start_date: Optional[date] = Query(None, description="Data de início (YYYY-MM-DD)"),
@@ -436,7 +436,7 @@ def get_top_customers(
     if end_date:
         base_query += " AND DATE(s.created_at) <= :end_date"
         params["end_date"] = end_date
-    if store_id:  # <-- MUDANÇA (Já estava aqui, mas agora é global)
+    if store_id:
         base_query += " AND s.store_id = :store_id"
         params["store_id"] = store_id
 
@@ -477,7 +477,7 @@ def get_top_customers(
         raise HTTPException(status_code=500, detail=f"Erro ao processar a query: {e}")
 
 
-# 12. Endpoint de Lojas (Fica igual)
+# Endpoint de Lojas
 @app.get("/api/v1/stores", response_model=List[StoreSchema])
 def get_stores(db: Session = Depends(get_db)):
     try:

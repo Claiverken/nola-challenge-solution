@@ -13,8 +13,7 @@
 </template>
 
 <script setup>
-// Isto define as "props" - as variáveis que podemos passar para este componente.
-// Estamos a dizer que o KpiCard precisa de um 'title' e de um 'value'.
+
 defineProps({
   title: {
     type: String,

@@ -1,9 +1,9 @@
-# schemas.py (ATUALIZADO)
+# schemas.py
 from pydantic import BaseModel
 from datetime import date
 from typing import Optional, List
 
-# 1. KpiResponse (Fica igual)
+# 1. KpiResponse
 class KpiResponse(BaseModel):
     total_revenue: float
     total_sales: int
@@ -11,7 +11,7 @@ class KpiResponse(BaseModel):
     class Config:
         from_attributes = True
 
-# 2. ProductSaleStat (Fica igual)
+# 2. ProductSaleStat
 class ProductSaleStat(BaseModel):
     product_id: int
     product_name: str
@@ -20,7 +20,7 @@ class ProductSaleStat(BaseModel):
     class Config:
         from_attributes = True
 
-# 3. TimeSeriesDataPoint (Fica igual)
+# 3. TimeSeriesDataPoint
 class TimeSeriesDataPoint(BaseModel):
     date: str
     group: Optional[str] = None
@@ -28,7 +28,7 @@ class TimeSeriesDataPoint(BaseModel):
     class Config:
         from_attributes = True
 
-# 4. TimeSeriesResponse (Fica igual)
+# 4. TimeSeriesResponse
 class TimeSeriesResponse(BaseModel):
     start_date: date
     end_date: date
@@ -36,7 +36,7 @@ class TimeSeriesResponse(BaseModel):
     metric: str
     data: List[TimeSeriesDataPoint]
 
-# 5. ItemSaleStat (Fica igual)
+# 5. ItemSaleStat
 class ItemSaleStat(BaseModel):
     item_id: int
     item_name: str
@@ -45,7 +45,7 @@ class ItemSaleStat(BaseModel):
     class Config:
         from_attributes = True
 
-# 6. DeliveryPerformanceStat (Fica igual)
+# 6. DeliveryPerformanceStat
 class DeliveryPerformanceStat(BaseModel):
     neighborhood: Optional[str] = "N/A"
     city: Optional[str] = "N/A"
@@ -54,7 +54,7 @@ class DeliveryPerformanceStat(BaseModel):
     class Config:
         from_attributes = True
 
-# 7. CustomerSegmentStat (Fica igual)
+# 7. CustomerSegmentStat
 class CustomerSegmentStat(BaseModel):
     customer_id: int
     customer_name: Optional[str] = None
@@ -66,7 +66,7 @@ class CustomerSegmentStat(BaseModel):
     class Config:
         from_attributes = True
 
-# 8. NOVO SCHEMA (Para a lista de lojas)
+# 8. StoreSCHEMA
 class StoreSchema(BaseModel):
     id: int
     name: str

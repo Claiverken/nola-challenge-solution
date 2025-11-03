@@ -17,7 +17,6 @@ import {
   CategoryScale
 } from 'chart.js'
 
-// Registamos as partes específicas do gráfico de LINHAS
 ChartJS.register(
   Title,
   Tooltip,
@@ -28,7 +27,6 @@ ChartJS.register(
   CategoryScale
 )
 
-// As props são as mesmas do BarChart: aceita dados e opções
 const props = defineProps({
   chartData: {
     type: Object,

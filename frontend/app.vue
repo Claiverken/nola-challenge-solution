@@ -398,9 +398,6 @@ async function fetchCustomerSegments() {
     finally { loadingCustomers.value = false }
 }
 
-// --- DADOS COMPUTADOS (para os 7 widgets) ---
-
-// (Todo o código das 'computed properties' e 'options' fica 100% igual)
 const topProductsChartData = computed(() => {
   if (!topProductsData.value || topProductsData.value.length === 0) return null
   const sortedData = [...topProductsData.value].reverse()
